@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <title>CheckFlow</title>
+
+  <!-- Cara de app no iPhone -->
+  <meta name="theme-color" content="#111111" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CheckFlow" />
+
+  <!-- Logo na aba -->
+  <link
+    rel="icon"
+    href='data:image/svg+xml;utf8,
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+      <rect width="128" height="128" rx="28" fill="%23111111"/>
+      <rect x="24" y="24" width="80" height="80" rx="18" fill="%23ffffff"/>
+      <path d="M42 65 L56 79 L86 47" stroke="%23111111" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>'
+  />
+
+  <!-- Ícone para tela inicial do iPhone -->
+  <link
+    rel="apple-touch-icon"
+    href='data:image/svg+xml;utf8,
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+      <rect width="180" height="180" rx="40" fill="%23111111"/>
+      <rect x="34" y="34" width="112" height="112" rx="24" fill="%23ffffff"/>
+      <path d="M58 92 L77 111 L122 64" stroke="%23111111" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>'
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --dark: #111111;
+      --danger: #ef4444;
+      --primary: #2563eb;
+      --success: #111111;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--dark);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .brand-sub {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .subtitulo {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .titulo {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .data {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .btn-reset {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 16px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .seletor-dia-box,
+    .add-box,
+    .progresso-box {
+      background: #f9fafb;
+      border: 1px solid #f0f1f4;
+      border-radius: 18px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .seletor-dia {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-size: 15px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+
+    .add-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 52px;
+      gap: 8px;
+    }
+
+    .add-row input,
+    .add-row button {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-size: 15px;
+      min-height: 46px;
+    }
+
+    .add-row input {
+      padding: 0 12px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+
+    .add-row button {
+      background: var(--dark);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+
+    .progresso-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .progresso-info span:first-child {
+      color: var(--muted);
+    }
+
+    .progresso-info span:last-child {
+      font-weight: 700;
+    }
+
+    .barra {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .barra-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--success);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tarefa {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .parte-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checkbox {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: transparent;
+      background: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .tarefa.checked .checkbox {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: #fff;
+    }
+
+    .conteudo {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .hora {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .texto-tarefa {
+      font-size: 15px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .tarefa.checked .texto-tarefa {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+
+    .acoes {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-mini {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-remove {
+      background: var(--danger);
+    }
+
+    .btn-mover {
+      background: var(--primary);
+    }
+
+    .vazio {
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: white;
+    }
+
+    .rodape {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .instalar-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #111111;
+      color: white;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 430px) {
+      .titulo {
+        font-size: 24px;
+      }
+
+      .add-row {
+        grid-template-columns: 86px 1fr 48px;
+      }
+
+      .texto-tarefa {
+        font-size: 14px;
+      }
+
+      .btn-mini {
+        width: 34px;
+        height: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <div class="brand">
+        <div class="brand-logo">✓</div>
+        <div>
+          <h1 class="brand-title">CheckFlow</h1>
+          <p class="brand-sub">Sua rotina diária no celular</p>
+        </div>
+      </div>
+
+      <div class="topo">
+        <div>
+          <p class="subtitulo">Checklist de hoje</p>
+          <h2 id="dia-semana" class="titulo"></h2>
+          <p id="data-hoje" class="data"></p>
+        </div>
+        <button class="btn-reset" id="resetar">Resetar</button>
+      </div>
+
+      <div class="seletor-dia-box">
+        <label class="label" for="seletor-dia">Visualizar / mover para outro dia</label>
+        <select id="seletor-dia" class="seletor-dia"></select>
+      </div>
+
+      <div class="add-box">
+        <label class="label">Adicionar tarefa no dia selecionado</label>
+        <div class="add-row">
+          <input id="nova-hora" type="text" placeholder="Hora" />
+          <input id="nova-tarefa" type="text" placeholder="+ nova tarefa..." />
+          <button id="btn-add">+</button>
+        </div>
+      </div>
+
+      <div class="progresso-box">
+        <div class="progresso-info">
+          <span>Progresso</span>
+          <span id="progresso-texto">0/0 • 0%</span>
+        </div>
+        <div class="barra">
+          <div class="barra-fill" id="barra-fill"></div>
+        </div>
+      </div>
+
+      <div class="lista" id="lista-tarefas"></div>
+
+      <div class="instalar-box">
+        Para usar como app no iPhone: abra no Safari e toque em <strong>Compartilhar → Adicionar à Tela de Início</strong>.
+      </div>
+
+      <div class="rodape">
+        Toque na tarefa para marcar. Use + para adicionar, - para remover e → para mover para outro dia.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const diasSemana = [
+      "Domingo",
+      "Segunda-feira",
+      "Terça-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "Sábado"
+    ];
+
+    const tarefasPadrao = {
+      0: [
+        { hora: "", texto: "Estudar leve (1–2h)" },
+        { hora: "", texto: "Organizar a semana, se precisar" },
+        { hora: "", texto: "Jogar / descansar" },
+        { hora: "", texto: "Recuperar energia" }
+      ],
+      1: [
+        { hora: "05:40", texto: "Acordar" },
+        { hora: "Manhã", texto: "Fazer café" },
+        { hora: "Manhã", texto: "Lavar louça, se tiver" },
+        { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+        { hora: "Manhã", texto: "Ver notícias / investimentos" },
+        { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+        { hora: "09:30", texto: "Beber hipercalórico" },
+        { hora: "09:30", texto: "Comer maçã" },
+        { hora: "12:00", texto: "Almoçar" },
+        { hora: "12:30", texto: "Ler 30 min" },
+        { hora: "16:40", texto: "Tomar café" },
+        { hora: "18:30", texto: "Comer banana" },
+        { hora: "18:30", texto: "Preparar intra-treino" },
+        { hora: "19:00–20:20", texto: "Treinar" },
+        { hora: "20:30–21:00", texto: "Banho" },
+        { hora: "20:30–21:00", texto: "Jantar" },
+        { hora: "20:30–21:00", texto: "Lavar louça" },
+        { hora: "20:30–21:00", texto: "Organizar o dia seguinte" },
+        { hora: "21:20–23:00", texto: "Blog" }
+      ],
+      2: [
+        { hora: "05:40", texto: "Acordar" },
+        { hora: "Manhã", texto: "Fazer café" },
+        { hora: "Manhã", texto: "Lavar louça, se tiver" },
+        { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+        { hora: "Manhã", texto: "Ver notícias / investimentos" },
+        { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+        { hora: "09:30", texto: "Beber hipercalórico" },
+        { hora: "09:30", texto: "Comer maçã" },
+        { hora: "12:00", texto: "Almoçar" },
+        { hora: "12:30", texto: "Ler 30 min" },
+        { hora: "16:40", texto: "Tomar café" },
+        { hora: "18:30", texto: "Comer banana" },
+        { hora: "18:30", texto: "Preparar intra-treino" },
+        { hora: "19:00–20:20", texto: "Treinar" },
+        { hora: "20:30–21:00", texto: "Banho" },
+        { hora: "20:30–21:00", texto: "Jantar" },
+        { hora: "20:30–21:00", texto: "Lavar louça" },
+        { hora: "20:30–21:00", texto: "Organizar o dia seguinte" },
+        { hora: "21:20–23:00", texto: "Blog" }
+      ],
+      3: [
+        { hora: "05:40", texto: "Acordar" },
+        { hora: "Manhã", texto: "Fazer café" },
+        { hora: "Manhã", texto: "Lavar louça, se tiver" },
+        { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+        { hora: "Manhã", texto: "Ver notícias / investimentos" },
+        { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+        { hora: "09:30", texto: "Beber hipercalórico" },
+        { hora: "09:30", texto: "Comer maçã" },
+        { hora: "12:00", texto: "Almoçar" },
+        { hora: "12:30", texto: "Ler 30 min" },
+        { hora: "16:40", texto: "Tomar café" },
+        { hora: "", text: "" }
+      ],
+      4: [
+        { hora: "05:40", texto: "Acordar" },
+        { hora: "Manhã", texto: "Fazer café" },
+        { hora: "Manhã", texto: "Lavar louça, se tiver" },
+        { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+        { hora: "Manhã", texto: "Ver notícias / investimentos" },
+        { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+        { hora: "09:30", texto: "Beber hipercalórico" },
+        { hora: "09:30", texto: "Comer maçã" },
+        { hora: "12:00", texto: "Almoçar" },
+        { hora: "12:30", texto: "Ler 30 min" },
+        { hora: "16:40", texto: "Tomar café" },
+        { hora: "18:30", texto: "Comer banana" },
+        { hora: "18:30", texto: "Preparar intra-treino" },
+        { hora: "19:00–20:20", texto: "Treinar" },
+        { hora: "20:30–21:00", texto: "Banho" },
+        { hora: "20:30–21:00", texto: "Jantar" },
+        { hora: "20:30–21:00", texto: "Lavar louça" },
+        { hora: "20:30–21:00", texto: "Organizar o dia seguinte" },
+        { hora: "21:20–23:00", texto: "Estudar faculdade" }
+      ],
+      5: [
+        { hora: "05:40", texto: "Acordar" },
+        { hora: "Manhã", texto: "Fazer café" },
+        { hora: "Manhã", texto: "Lavar louça, se tiver" },
+        { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+        { hora: "Manhã", texto: "Ver notícias / investimentos" },
+        { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+        { hora: "09:30", texto: "Beber hipercalórico" },
+        { hora: "09:30", texto: "Comer maçã" },
+        { hora: "12:00", texto: "Almoçar" },
+        { hora: "12:30", texto: "Ler 30 min" },
+        { hora: "16:40", texto: "Tomar café" },
+        { hora: "18:30", texto: "Comer banana" },
+        { hora: "18:30", texto: "Preparar intra-treino" },
+        { hora: "19:00–20:20", texto: "Treinar" },
+        { hora: "20:30–21:00", texto: "Banho" },
+        { hora: "20:30–21:00", texto: "Jantar" },
+        { hora: "20:30–21:00", texto: "Lavar louça" },
+        { hora: "20:30–21:00", texto: "Organizar o dia seguinte" },
+        { hora: "21:20–23:00", texto: "Site CRM" }
+      ],
+      6: [
+        { hora: "Manhã", texto: "Academia" },
+        { hora: "Almoço", texto: "Almoçar" },
+        { hora: "Tarde", texto: "Preparar tudo para a semana" },
+        { hora: "Tarde", texto: "Levar / separar roupas" },
+        { hora: "Tarde", texto: "Estudar 2–3h ao longo do dia" },
+        { hora: "Tarde", texto: "Compensar faculdade, se precisar" },
+        { hora: "Livre", texto: "Jogar / tempo livre" },
+        { hora: "Noite", texto: "Passar a noite com o amor" }
+      ]
+    };
+
+    // Corrige quarta
+    tarefasPadrao[3] = [
+      { hora: "05:40", texto: "Acordar" },
+      { hora: "Manhã", texto: "Fazer café" },
+      { hora: "Manhã", texto: "Lavar louça, se tiver" },
+      { hora: "Manhã", texto: "Preparar maçã na vasilha" },
+      { hora: "Manhã", texto: "Ver notícias / investimentos" },
+      { hora: "Carro", texto: "Planejar blogs/sites ou ver notícias" },
+      { hora: "09:30", texto: "Beber hipercalórico" },
+      { hora: "09:30", texto: "Comer maçã" },
+      { hora: "12:00", texto: "Almoçar" },
+      { hora: "12:30", texto: "Ler 30 min" },
+      { hora: "16:40", texto: "Tomar café" },
+      { hora: "", texto: "Sem treino (off)" },
+      { hora: "20:30–21:00", texto: "Jantar" },
+      { hora: "20:30–21:00", texto: "Lavar louça" },
+      { hora: "20:30–21:00", texto: "Organizar o dia seguinte" },
+      { hora: "21:20–23:00", texto: "Estudar faculdade" }
+    ];
+
+    const agora = new Date();
+    const diaRealHoje = agora.getDay();
+    const dataChave = agora.toISOString().slice(0, 10);
+
+    const elDiaSemana = document.getElementById("dia-semana");
+    const elDataHoje = document.getElementById("data-hoje");
+    const elLista = document.getElementById("lista-tarefas");
+    const elProgressoTexto = document.getElementById("progresso-texto");
+    const elBarraFill = document.getElementById("barra-fill");
+    const elResetar = document.getElementById("resetar");
+    const elSeletorDia = document.getElementById("seletor-dia");
+    const elNovaHora = document.getElementById("nova-hora");
+    const elNovaTarefa = document.getElementById("nova-tarefa");
+    const elBtnAdd = document.getElementById("btn-add");
+
+    let tarefasSemana = carregarTarefasSemana();
+    let diaVisualizado = diaRealHoje;
+    let checksHoje = carregarChecksHoje();
+
+    function carregarTarefasSemana() {
+      const salvo = localStorage.getItem("checkflow-tarefas-semana");
+      if (salvo) {
+        try {
+          return JSON.parse(salvo);
+        } catch (e) {}
+      }
+      return JSON.parse(JSON.stringify(tarefasPadrao));
+    }
+
+    function salvarTarefasSemana() {
+      localStorage.setItem("checkflow-tarefas-semana", JSON.stringify(tarefasSemana));
+    }
+
+    function chaveChecksDoDia() {
+      return "checkflow-checks-" + dataChave;
+    }
+
+    function carregarChecksHoje() {
+      const salvo = localStorage.getItem(chaveChecksDoDia());
+      if (salvo) {
+        try {
+          return JSON.parse(salvo);
+        } catch (e) {}
+      }
+      return {};
+    }
+
+    function salvarChecksHoje() {
+      localStorage.setItem(chaveChecksDoDia(), JSON.stringify(checksHoje));
+    }
+
+    function formatarData(data) {
+      return data.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    function popularSeletorDias() {
+      elSeletorDia.innerHTML = "";
+      diasSemana.forEach((dia, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = dia;
+        if (index === diaVisualizado) option.selected = true;
+        elSeletorDia.appendChild(option);
+      });
+    }
+
+    function obterTarefasDoDia(dia) {
+      return tarefasSemana[dia] || [];
+    }
+
+    function alternarTarefa(index) {
+      if (diaVisualizado !== diaRealHoje) return;
+      checksHoje[index] = !checksHoje[index];
+      salvarChecksHoje();
+      renderizar();
+    }
+
+    function removerTarefa(index) {
+      tarefasSemana[diaVisualizado].splice(index, 1);
+
+      if (diaVisualizado === diaRealHoje) {
+        const novoChecks = {};
+        const tarefasHoje = obterTarefasDoDia(diaVisualizado);
+        tarefasHoje.forEach((_, i) => {
+          novoChecks[i] = !!checksHoje[i];
+        });
+        checksHoje = novoChecks;
+        salvarChecksHoje();
+      }
+
+      salvarTarefasSemana();
+      renderizar();
+    }
+
+    function moverTarefa(index) {
+      const tarefa = tarefasSemana[diaVisualizado][index];
+
+      let msg = "Mover para qual dia?\n";
+      diasSemana.forEach((dia, i) => {
+        msg += i + " = " + dia + "\n";
+      });
+
+      const destinoStr = prompt(msg, String(diaVisualizado));
+      if (destinoStr === null) return;
+
+      const destino = Number(destinoStr);
+      if (Number.isNaN(destino) || destino < 0 || destino > 6) {
+        alert("Dia inválido.");
+        return;
+      }
+
+      tarefasSemana[destino].push(tarefa);
+      tarefasSemana[diaVisualizado].splice(index, 1);
+
+      if (diaVisualizado === diaRealHoje) {
+        const novoChecks = {};
+        const tarefasHoje = obterTarefasDoDia(diaVisualizado);
+        tarefasHoje.forEach((_, i) => {
+          novoChecks[i] = !!checksHoje[i];
+        });
+        checksHoje = novoChecks;
+        salvarChecksHoje();
+      }
+
+      salvarTarefasSemana();
+      renderizar();
+    }
+
+    function adicionarTarefa() {
+      const texto = elNovaTarefa.value.trim();
+      const hora = elNovaHora.value.trim();
+
+      if (!texto) return;
+
+      tarefasSemana[diaVisualizado].push({
+        hora: hora,
+        texto: texto
+      });
+
+      elNovaHora.value = "";
+      elNovaTarefa.value = "";
+      salvarTarefasSemana();
+      renderizar();
+    }
+
+    function atualizarProgresso() {
+      const tarefasHoje = obterTarefasDoDia(diaVisualizado);
+      const concluidas = tarefasHoje.filter((_, index) => !!checksHoje[index]).length;
+      const total = tarefasHoje.length;
+      const porcentagem = total ? Math.round((concluidas / total) * 100) : 0;
+
+      elProgressoTexto.textContent = concluidas + "/" + total + " • " + porcentagem + "%";
+      elBarraFill.style.width = porcentagem + "%";
+    }
+
+    function criarItemTarefa(item, index) {
+      const isHoje = diaVisualizado === diaRealHoje;
+      const checked = isHoje ? !!checksHoje[index] : false;
+
+      const tarefaEl = document.createElement("div");
+      tarefaEl.className = "tarefa" + (checked ? " checked" : "");
+
+      const parteCheck = document.createElement("div");
+      parteCheck.className = "parte-check";
+
+      const checkbox = document.createElement("div");
+      checkbox.className = "checkbox";
+      checkbox.textContent = "✓";
+      parteCheck.appendChild(checkbox);
+
+      parteCheck.addEventListener("click", () => {
+        if (isHoje) alternarTarefa(index);
+      });
+
+      const conteudo = document.createElement("div");
+      conteudo.className = "conteudo";
+      conteudo.addEventListener("click", () => {
+        if (isHoje) alternarTarefa(index);
+      });
+
+      if (item.hora) {
+        const horaEl = document.createElement("div");
+        horaEl.className = "hora";
+        horaEl.textContent = item.hora;
+        conteudo.appendChild(horaEl);
+      }
+
+      const textoEl = document.createElement("div");
+      textoEl.className = "texto-tarefa";
+      textoEl.textContent = item.texto;
+      conteudo.appendChild(textoEl);
+
+      const acoes = document.createElement("div");
+      acoes.className = "acoes";
+
+      const btnMover = document.createElement("button");
+      btnMover.className = "btn-mini btn-mover";
+      btnMover.textContent = "→";
+      btnMover.title = "Mover para outro dia";
+      btnMover.addEventListener("click", (e) => {
+        e.stopPropagation();
+        moverTarefa(index);
+      });
+
+      const btnRemove = document.createElement("button");
+      btnRemove.className = "btn-mini btn-remove";
+      btnRemove.textContent = "-";
+      btnRemove.title = "Remover";
+      btnRemove.addEventListener("click", (e) => {
+        e.stopPropagation();
+        removerTarefa(index);
+      });
+
+      acoes.appendChild(btnMover);
+      acoes.appendChild(btnRemove);
+
+      tarefaEl.appendChild(parteCheck);
+      tarefaEl.appendChild(conteudo);
+      tarefaEl.appendChild(acoes);
+
+      return tarefaEl;
+    }
+
+    function renderizar() {
+      const tarefasDoDia = obterTarefasDoDia(diaVisualizado);
+
+      elDiaSemana.textContent = diasSemana[diaRealHoje];
+      elDataHoje.textContent = formatarData(agora);
+      elLista.innerHTML = "";
+
+      if (!tarefasDoDia.length) {
+        const vazio = document.createElement("div");
+        vazio.className = "vazio";
+        vazio.textContent = "Nenhuma tarefa neste dia.";
+        elLista.appendChild(vazio);
+      } else {
+        tarefasDoDia.forEach((item, index) => {
+          elLista.appendChild(criarItemTarefa(item, index));
+        });
+      }
+
+      atualizarProgresso();
+      popularSeletorDias();
+    }
+
+    elBtnAdd.addEventListener("click", adicionarTarefa);
+
+    elNovaTarefa.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") adicionarTarefa();
+    });
+
+    elNovaHora.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") adicionarTarefa();
+    });
+
+    elResetar.addEventListener("click", () => {
+      if (!confirm("Deseja limpar os checks de hoje?")) return;
+      checksHoje = {};
+      salvarChecksHoje();
+      renderizar();
+    });
+
+    elSeletorDia.addEventListener("change", () => {
+      diaVisualizado = Number(elSeletorDia.value);
+      renderizar();
+    });
+
+    renderizar();
+  </script>
+</body>
+</html>
